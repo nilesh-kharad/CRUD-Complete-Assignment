@@ -1,0 +1,340 @@
+<%- include('./header.ejs') %>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="statistics-details d-flex align-items-center justify-content-around">
+                <div class="text-center">
+                    <!-- <p class="statistics-title">No. Of Client</p>
+                    <h3 class="rate-percentage">3</h3> -->
+                </div>
+                <div class="text-center">
+                    <!-- <p class="statistics-title">Total Active JD</p>
+                    <h3 class="rate-percentage">3</h3> -->
+                </div>
+                <div class="text-center">
+                    <!-- <p class="statistics-title">My Active JD</p>
+                    <h3 class="rate-percentage">1</h3> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-sm-12">
+            <div class="home-tab">
+                <button onclick="adduser()" class="btn btn-primary">Add Users</button>
+                <button id="logout" class="btn btn-primary">Logout</button>
+                <div class="tab-content tab-content-basic">
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                        <div class="row">
+                            <div class="col-lg-12 d-flex flex-column">
+                                <div class="row  flex-grow ">
+                                    <div class="col-12 grid-margin stretch-card">
+                                        <div class="card card-rounded">
+                                            <div class="card-body">
+                                                <div class="table-responsive  mt-1">
+                                                    <table class="table select-table">
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th>ID</th>
+                                                                <th>Profile Img</th>
+                                                                <th>Full Name</th>
+                                                                <th>Mobile</th>
+                                                                <th>Mail</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="showdata">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content login-modal-content">
+                <div class="modal-header login-modal-header border-bottom-0">
+                    <h4>Update</h4>
+
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column container-fluid">
+                        <form class="row" id="updateSingle" method="POST"></form>
+                        <div id="update">
+
+                        </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="insertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content login-modal-content">
+                <div class="modal-header login-modal-header border-bottom-0">
+                    <h4>Update</h4>
+
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column container-fluid">
+                        <form class="row" id="insertSingleform">
+                            <div id="update">
+
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <%- include('./footer.ejs') %>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+        <script>
+
+            $(document).ready(function () {
+                getBranches()
+            });
+
+
+
+            function getBranches() {
+
+                $.ajax({
+                    url: "/api/getAlluser",
+                    method: 'get',
+                    data: 1,
+                    success: function (data) {
+                        var html;
+                        for (i = 0; i < data.data.length; i++) {
+                            j = i + 1;
+                            html +=
+                                `
+            <tr class="single-card  card-body">
+                <td>${j}</td>
+                <td>${data.data[i].profileimg} </td>
+                <td>${data.data[i].Full_Name} </td>
+                <td>${data.data[i].Mobile} </td>
+                <td>${data.data[i].Email} </td>
+                <td><a onclick="getSingleuser('${data.data[i]._id}')" class="fas fa-edit" id="edit" >update</a> 
+               <a onclick="deleteUser('${data.data[i]._id}')" class="fas fa-trash-alt" style="color:red" id="delete">delete</a> </td>
+            </tr>`;
+                        }
+                        $('#showdata').html(html);
+                    },
+                });
+            }
+
+            function getSingleuser(id) {
+                $('#updateModal').modal('show');
+
+                $.ajax({
+                    type: 'ajax',
+                    method: 'POST',
+                    url: "/api/getSpecificUser",
+                    data: { id: id },
+                    success: function (data) {
+                        var html;
+                        html +=
+                            `
+                            <div class="form-group col-md-12">
+                                <input type="text" name="id" value="${data.data[0]._id}"
+                                    class="form-control" hidden>
+                                <img src="./static/${data.data[0].profileimg}" style="height:100px;" alt="">
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Profile Image </label>
+                                    <input type="file" name="Profile" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Name </label>
+                                    <input type="text" name="Full_Name" value="${data.data[0].Full_Name}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> Mobile </label>
+                                    <input type="text" name="Mobile" value="${data.data[0].Mobile}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Email </label>
+                                    <input type="text" name="Email" value="${data.data[0].Email}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> Address </label>
+                                    <input type="text" name="Address" value="${data.data[0].Address}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Country </label>
+                                    <input type="text" name="Country" value="${data.data[0].Country}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> State </label>
+                                    <input type="text" name="State" value="${data.data[0].State}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> City </label>
+                                    <input type="text" name="City" value="${data.data[0].City}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> Pincode </label>
+                                    <input type="text" name="Pincode" value="${data.data[0].Pincode}" class="form-control">
+                                </div>
+                               
+                            </div>
+                            <input onclick="" type="submit" class="btn btn-info btn-block login-btn-round"
+                                value="Submit">
+                          `;
+                        $('#update').html(html);
+
+                    }
+                });
+            }
+
+            function deleteUser(id) {
+
+                $.ajax({
+                    type: 'ajax',
+                    method: 'POST',
+                    url: "/api/deleteUser",
+                    data: { id: id },
+                    success: function (data) {
+                        window.location.href = `/dashboard`
+                    },
+                });
+            }
+
+
+            $(document).on('submit', '#updateSingle', function (e) {
+                e.preventDefault();
+                var formdata = $('#updateSingle').serialize();
+                $.ajax({
+                    url: "/api/updateUser",
+                    method: 'post',
+                    data: formdata,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        window.location.href = `/dashboard`
+                    }
+                });
+            });
+
+
+            function adduser() {
+                $('#insertModal').modal('show');
+                var html;
+                html = `
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Profile Image </label>
+                                    <input type="file" name="Profile" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Name </label>
+                                    <input type="text" name="Full_Name" class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> Mobile </label>
+                                    <input type="text" name="Mobile"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Email </label>
+                                    <input type="text" name="Email"  class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> Address </label>
+                                    <input type="text" name="Address"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Country </label>
+                                    <input type="text" name="Country"  class="form-control">
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label> State </label>
+                                    <input type="text" name="State" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> City </label>
+                                    <input type="text" name="City" class="form-control">
+                                </div>
+                               
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group col-md-8">
+                                    <label> Pincode </label>
+                                    <input type="text" name="Pincode" class="form-control">
+                                </div>
+                               
+                            </div>
+                            <input onclick="" type="submit" class="btn btn-info btn-block login-btn-round"
+                                value="Submit">
+                          `;
+                $('#insertSingleform').html(html);
+            }
+
+            $(document).on('submit', '#insertSingleform', function (e) {
+                e.preventDefault();
+                var formdata = $('#insertSingleform').serialize();
+                $.ajax({
+                    url: "/api/addUser",
+                    method: 'post',
+                    data: formdata,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        console.log(data.message)
+                        window.location.href = `/dashboard`
+                    }
+                });
+            });
+
+
+            $(document).on('click', '#logout', function (e) {
+                $.ajax({
+                    url: "/api/logout",
+                    method: 'get',
+                    data: 1,
+                    success: function (data) {
+                        window.location.href = `/signupform`
+                    }
+                });
+            });
+
+
+
+        </script>
