@@ -14,6 +14,10 @@ router.get('/signupform', function(req, res, next) {
   res.render('signupForm.ejs');
 });
 
+router.get('/resetPassword', function(req, res, next) {
+  res.render('resetPassword.ejs');
+});
+
 
 router.get('/dashboard', function(req, res, next) {
   res.render('dashboard.ejs');

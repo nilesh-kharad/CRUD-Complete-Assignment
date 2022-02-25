@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/', indexRouter);
 app.use('/signupform', indexRouter);
+app.use('/resetPassword', indexRouter);
 
 
 app.use('/login', api);
