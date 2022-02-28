@@ -118,7 +118,6 @@ router.post('/resetPassword', urlencodedParser, async function (req, res) {
         const db = client.db(connection.name);
 
         var mailid = req.body.mailID;
-        var collection_of_page_data = {}
         var fatchEmployee
 
         var row = await db.collection('mainUser').find({ 'email': mailid }).toArray();
@@ -141,6 +140,7 @@ router.post('/resetPassword', urlencodedParser, async function (req, res) {
                 }
 
             ]).toArray();
+            console.log(fatchEmployee)
 
             res.send({ status: true, message: "Your Password", data: fatchEmployee })
         }

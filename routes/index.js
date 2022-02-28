@@ -14,7 +14,7 @@ router.get('/signupform', function(req, res, next) {
   res.render('signupForm.ejs');
 });
 
-router.get('/resetPassword', function(req, res, next) {
+router.get('/resetpassPage', function(req, res, next) {
   res.render('resetPassword.ejs');
 });
 
